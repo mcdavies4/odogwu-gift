@@ -15,7 +15,6 @@ export async function POST(req: NextRequest) {
 
     if (error || !gift) return NextResponse.json({ error: 'Gift not found' }, { status: 404 })
 
-    // Only send if payment is confirmed (status delivered or pending with stripe_payment_id)
     if (!gift.sender_email) return NextResponse.json({ error: 'No sender email' }, { status: 400 })
 
     // Idempotency: skip if already sent

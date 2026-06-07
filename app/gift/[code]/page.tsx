@@ -45,13 +45,20 @@ export default async function GiftPage({ params }: { params: { code: string } })
             )}
             {!redeemed && !expired && (
               <>
-                <div style={{background:'#fff',borderRadius:16,padding:16,margin:'0 auto 12px',width:144,height:144,display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column'}}>
-                  <div style={{color:'#000',fontWeight:900,fontSize:18,fontFamily:'monospace',letterSpacing:2}}>{gift.code}</div>
-                  <div style={{color:'rgba(0,0,0,0.4)',fontSize:11,marginTop:4}}>Show to merchant</div>
+                <div style={{background:'#fff',borderRadius:16,padding:12,margin:'0 auto 12px',width:160,height:160,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=136x136&data=${encodeURIComponent(`${process.env.NEXT_PUBLIC_APP_URL}/gift/${gift.code}`)}&bgcolor=ffffff&color=000000&margin=0`}
+                    alt={`QR code for gift ${gift.code}`}
+                    width={136}
+                    height={136}
+                    style={{display:'block',borderRadius:4}}
+                  />
                 </div>
-                <div style={{fontSize:12,color:'rgba(245,240,232,0.35)'}}>
-                  Code: <strong style={{color:S.gold,fontFamily:'monospace',fontSize:14}}>{gift.code}</strong>
+                <div style={{fontSize:12,color:'rgba(245,240,232,0.35)',marginBottom:4}}>
+                  Code: <strong style={{color:S.gold,fontFamily:'monospace',fontSize:14,letterSpacing:2}}>{gift.code}</strong>
                 </div>
+                <div style={{fontSize:11,color:'rgba(245,240,232,0.25)'}}>Show QR code or code to merchant</div>
               </>
             )}
           </div>
