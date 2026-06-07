@@ -13,12 +13,6 @@ export async function sendGiftWhatsApp({
   giftCode: string
   occasion: string
 }) {
-  const twilio = (await import('twilio')).default
-  const client = twilio(
-    process.env.TWILIO_ACCOUNT_SID,
-    process.env.TWILIO_AUTH_TOKEN
-  )
-
   const appUrl = process.env.NEXT_PUBLIC_APP_URL
   const giftUrl = `${appUrl}/gift/${giftCode}`
   const amountStr = `£${(amount / 100).toFixed(2)}`
@@ -42,9 +36,32 @@ export async function sendGiftWhatsApp({
     `_Valid for 12 months · Powered by Odogwu · odogwu.online_`,
   ].filter(Boolean).join('\n')
 
-  await client.messages.create({
-    from: process.env.TWILIO_WHATSAPP_FROM,
-    to: `whatsapp:${recipientPhone}`,
-    body,
-  })
+  const accountSid = process.env.TWILIO_ACCOUNT_SID
+  const authToken  = process.env.TWILIO_AUTH_TOKEN
+  const from       = process.env.TWILIO_WHATSAPP_FROM
+
+  const credentials = btoa(`${accountSid}:${authToken}`)
+
+  const res = await fetch(
+    `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${credentials}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        From: from!,
+        To: `whatsapp:${recipientPhone}`,
+        Body: body,
+      }).toString(),
+    }
+  )
+
+  if (!res.ok) {
+    const err = await res.json()
+    throw new Error(err.message || 'WhatsApp send failed')
+  }
+
+  return res.json()
 }

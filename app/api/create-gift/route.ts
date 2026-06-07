@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe'
 import { supabaseAdmin } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
@@ -14,7 +13,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields or amount too small' }, { status: 400 })
     }
 
-    // Create gift record in DB first
     const { data: gift, error: dbError } = await supabaseAdmin
       .from('gifts')
       .insert({
@@ -33,31 +31,37 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to create gift' }, { status: 500 })
     }
 
-    // Create Stripe checkout
     const fee = Math.ceil(amount * 0.03)
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [{
-        price_data: {
-          currency: 'gbp',
-          product_data: {
-            name: `Odogwu Gift — £${(amount / 100).toFixed(2)} for ${occasion}`,
-            description: `From ${senderName}${message ? ` · "${message}"` : ''}`,
-          },
-          unit_amount: amount + fee,
-        },
-        quantity: 1,
-      }],
-      mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?gift=${gift.id}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/send`,
-      customer_email: senderEmail || undefined,
-      metadata: { giftId: gift.id, giftCode: gift.code },
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL
+
+    // Call Stripe API directly (fetch — edge compatible)
+    const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        'payment_method_types[0]': 'card',
+        'line_items[0][price_data][currency]': 'gbp',
+        'line_items[0][price_data][product_data][name]': `Odogwu Gift — £${(amount / 100).toFixed(2)} for ${occasion}`,
+        'line_items[0][price_data][product_data][description]': `From ${senderName}${message ? ` · "${message}"` : ''}`,
+        'line_items[0][price_data][unit_amount]': String(amount + fee),
+        'line_items[0][quantity]': '1',
+        'mode': 'payment',
+        'success_url': `${appUrl}/success?gift=${gift.id}`,
+        'cancel_url': `${appUrl}/send`,
+        ...(senderEmail ? { 'customer_email': senderEmail } : {}),
+        'metadata[giftId]': gift.id,
+        'metadata[giftCode]': gift.code,
+      }).toString()
     })
+
+    const session = await stripeRes.json()
+    if (!stripeRes.ok) throw new Error(session.error?.message || 'Stripe error')
 
     return NextResponse.json({ checkoutUrl: session.url })
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }
-

@@ -1,3 +1,4 @@
+export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 import { supabaseAdmin } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
