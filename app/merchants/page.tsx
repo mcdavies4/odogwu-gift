@@ -1,42 +1,54 @@
+import Link from 'next/link'
+
+const S = {
+  dark:'#0A0A0A', surface:'#141414', text:'#F5F0E8',
+  muted:'rgba(245,240,232,0.55)', border:'rgba(255,255,255,0.08)',
+  gold:'#D4A017', goldLight:'#F0C040', borderGold:'rgba(212,160,23,0.25)',
+}
+const input = {width:'100%',background:S.dark,border:`1px solid ${S.border}`,borderRadius:12,padding:'12px 16px',color:S.text,fontSize:14,fontFamily:'inherit',outline:'none',display:'block',boxSizing:'border-box' as const}
+
 export default function MerchantsPage() {
   return (
-    <main className="min-h-screen bg-[#0A0A0A] text-[#F5F0E8]">
-      <div className="max-w-3xl mx-auto px-6 py-16">
-        <a href="/" className="text-[#D4A017] text-sm mb-8 block">← Back to Odogwu</a>
+    <main style={{minHeight:'100vh',background:S.dark,color:S.text,fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif'}}>
+      <div style={{maxWidth:680,margin:'0 auto',padding:'40px 24px 60px'}}>
+        <Link href="/" style={{color:S.gold,fontSize:13,textDecoration:'none',display:'block',marginBottom:32}}>← Back to Odogwu</Link>
 
-        <h1 className="text-4xl font-black mb-4">List your business on Odogwu</h1>
-        <p className="text-[rgba(245,240,232,0.55)] text-lg mb-12 leading-relaxed">
+        <h1 style={{fontSize:36,fontWeight:900,marginBottom:12}}>List your business on Odogwu</h1>
+        <p style={{color:S.muted,fontSize:16,lineHeight:1.7,marginBottom:40}}>
           Reach thousands of Nigerian and African diaspora customers at weddings, birthdays
           and celebrations across the UK. They receive Odogwu gifts — you get new customers.
         </p>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:14,marginBottom:40}}>
           {[
-            { icon: '👥', title: 'New customers', desc: 'Gift recipients are actively looking to spend at your business.' },
-            { icon: '💷', title: 'Guaranteed payment', desc: 'Odogwu pays you directly for every redemption, within 7 days.' },
-            { icon: '📍', title: 'UK-wide', desc: 'Any African business in the UK can join — restaurants, salons, fashion, events.' },
+            {icon:'👥',title:'New customers',desc:'Gift recipients are actively looking to spend at your business.'},
+            {icon:'💷',title:'Guaranteed payment',desc:'Odogwu pays you for every redemption, within 7 days.'},
+            {icon:'📍',title:'UK-wide',desc:'Any African business in the UK can join — restaurants, salons, fashion, events.'},
           ].map(item => (
-            <div key={item.title} className="bg-[#141414] border border-white/8 rounded-2xl p-5">
-              <div className="text-2xl mb-3">{item.icon}</div>
-              <div className="font-bold mb-1">{item.title}</div>
-              <div className="text-sm text-[rgba(245,240,232,0.5)]">{item.desc}</div>
+            <div key={item.title} style={{background:S.surface,border:`1px solid ${S.border}`,borderRadius:18,padding:20}}>
+              <div style={{fontSize:28,marginBottom:12}}>{item.icon}</div>
+              <div style={{fontWeight:700,marginBottom:6,fontSize:15}}>{item.title}</div>
+              <div style={{fontSize:13,color:S.muted,lineHeight:1.6}}>{item.desc}</div>
             </div>
           ))}
         </div>
 
-        <div className="bg-[#141414] border border-[#D4A017]/20 rounded-2xl p-8">
-          <h2 className="text-2xl font-black mb-6">Apply to join</h2>
-          <form className="space-y-4" action="mailto:merchants@odogwu.online" method="post">
-            <input placeholder="Business name" required className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D4A017]/50 focus:outline-none" />
-            <input placeholder="Business category (restaurant, salon, etc.)" className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D4A017]/50 focus:outline-none" />
-            <input placeholder="City" className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D4A017]/50 focus:outline-none" />
-            <input type="email" placeholder="Email address" required className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D4A017]/50 focus:outline-none" />
-            <input placeholder="Phone number" className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D4A017]/50 focus:outline-none" />
-            <button type="submit" className="btn-gold w-full py-4 font-bold">
+        <div style={{background:S.surface,border:`1px solid ${S.borderGold}`,borderRadius:20,padding:32}}>
+          <h2 style={{fontSize:24,fontWeight:900,marginBottom:24}}>Apply to join</h2>
+          <form style={{display:'flex',flexDirection:'column',gap:12}}
+            action="mailto:merchants@odogwu.online" method="post">
+            <input placeholder="Business name" required style={input}/>
+            <input placeholder="Business category (restaurant, salon, etc.)" style={input}/>
+            <input placeholder="City" style={input}/>
+            <input type="email" placeholder="Email address" required style={input}/>
+            <input placeholder="Phone number" style={input}/>
+            <button type="submit" style={{background:`linear-gradient(135deg,${S.gold},${S.goldLight})`,
+              color:'#000',fontWeight:900,borderRadius:12,padding:'14px',fontSize:16,
+              cursor:'pointer',border:'none',fontFamily:'inherit',marginTop:8}}>
               Apply Now →
             </button>
           </form>
-          <p className="text-xs text-center text-[rgba(245,240,232,0.3)] mt-4">
+          <p style={{fontSize:12,textAlign:'center',color:'rgba(245,240,232,0.3)',marginTop:14}}>
             12% commission on redemptions · Paid weekly · Free to join
           </p>
         </div>

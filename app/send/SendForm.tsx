@@ -3,104 +3,127 @@ import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-const AMOUNTS = [10, 20, 50, 100, 200, 500]
-const OCCASIONS = ['Wedding', 'Birthday', 'Naming Ceremony', 'Graduation', 'Thanksgiving', 'Party', 'Engagement', 'Housewarming', 'Other']
+const S = {
+  dark:'#0A0A0A', surface:'#141414', text:'#F5F0E8',
+  muted:'rgba(245,240,232,0.55)', border:'rgba(255,255,255,0.08)',
+  gold:'#D4A017', goldLight:'#F0C040',
+}
+
+const AMOUNTS = [10,20,50,100,200,500]
+const OCCASIONS = ['Wedding','Birthday','Naming Ceremony','Graduation','Thanksgiving','Party','Engagement','Housewarming','Other']
+
+const input = {width:'100%',background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,padding:'12px 16px',color:S.text,fontSize:14,fontFamily:'inherit',outline:'none',boxSizing:'border-box' as const}
 
 export default function SendForm() {
   const params = useSearchParams()
-  const [amount, setAmount] = useState(parseInt(params.get('amount') || '50'))
+  const [amount, setAmount] = useState(parseInt(params.get('amount')||'50'))
   const [custom, setCustom] = useState('')
-  const [form, setForm] = useState({ senderName: '', senderEmail: '', recipientPhone: '', message: '', occasion: 'Wedding' })
+  const [form, setForm] = useState({senderName:'',senderEmail:'',recipientPhone:'',message:'',occasion:'Wedding'})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const finalAmount = custom ? parseInt(custom) : amount
+  const finalAmount = custom ? parseInt(custom)||0 : amount
   const fee = Math.ceil(finalAmount * 0.03)
   const total = finalAmount + fee
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setLoading(true)
-    setError('')
+    setLoading(true); setError('')
     try {
       const res = await fetch('/api/create-gift', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, amount: finalAmount * 100 }),
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({...form, amount: finalAmount * 100}),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Something went wrong')
+      if(!res.ok) throw new Error(data.error||'Something went wrong')
       window.location.href = data.checkoutUrl
-    } catch (err: any) {
-      setError(err.message)
-      setLoading(false)
+    } catch(err:any) {
+      setError(err.message); setLoading(false)
     }
   }
 
   return (
-    <main className="min-h-screen bg-[#0A0A0A] text-[#F5F0E8]">
-      <div className="max-w-lg mx-auto px-6 py-12">
-        <div className="mb-8">
-          <Link href="/" className="text-[#D4A017] text-sm mb-4 block">← Back</Link>
-          <h1 className="text-3xl font-black mb-2">Send a gift 🎊</h1>
-          <p className="text-[rgba(245,240,232,0.5)]">They will receive it on WhatsApp instantly.</p>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-6">
+    <main style={{minHeight:'100vh',background:S.dark,color:S.text,fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif'}}>
+      <div style={{maxWidth:520,margin:'0 auto',padding:'40px 24px 60px'}}>
+
+        <Link href="/" style={{color:S.gold,fontSize:13,textDecoration:'none',display:'block',marginBottom:24}}>← Back</Link>
+        <h1 style={{fontSize:32,fontWeight:900,marginBottom:6}}>Send a gift 🎊</h1>
+        <p style={{color:S.muted,marginBottom:32,fontSize:15}}>They will receive it on WhatsApp instantly.</p>
+
+        <form onSubmit={handleSubmit} style={{display:'flex',flexDirection:'column',gap:24}}>
+
+          {/* Amount */}
           <div>
-            <label className="block text-sm font-bold mb-3">Gift amount</label>
-            <div className="grid grid-cols-3 gap-2 mb-3">
+            <label style={{display:'block',fontSize:13,fontWeight:700,marginBottom:12}}>Gift amount</label>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginBottom:10}}>
               {AMOUNTS.map(a => (
-                <button key={a} type="button"
-                  onClick={() => { setAmount(a); setCustom('') }}
-                  className={`py-3 rounded-xl font-bold text-sm border transition-all ${
-                    !custom && amount === a
-                      ? 'bg-[#D4A017] text-black border-[#D4A017]'
-                      : 'bg-[#141414] border-white/10 hover:border-[#D4A017]/40'
-                  }`}>£{a}</button>
+                <button key={a} type="button" onClick={()=>{setAmount(a);setCustom('')}}
+                  style={{padding:'12px 8px',borderRadius:12,fontWeight:800,fontSize:15,cursor:'pointer',fontFamily:'inherit',
+                    border: !custom&&amount===a ? `2px solid ${S.gold}` : `1px solid ${S.border}`,
+                    background: !custom&&amount===a ? `rgba(212,160,23,0.15)` : S.surface,
+                    color: !custom&&amount===a ? S.gold : S.text}}>
+                  £{a}
+                </button>
               ))}
             </div>
-            <input type="number" placeholder="Custom amount (£5 - £500)"
-              value={custom} onChange={e => setCustom(e.target.value)}
-              min={5} max={500}
-              className="w-full bg-[#141414] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D4A017]/50 focus:outline-none" />
+            <input type="number" placeholder="Custom amount (£5–£500)" value={custom}
+              onChange={e=>setCustom(e.target.value)} min={5} max={500} style={input}/>
           </div>
+
+          {/* Occasion */}
           <div>
-            <label className="block text-sm font-bold mb-2">Occasion</label>
-            <select value={form.occasion} onChange={e => setForm({...form, occasion: e.target.value})}
-              className="w-full bg-[#141414] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D4A017]/50 focus:outline-none">
-              {OCCASIONS.map(o => <option key={o}>{o}</option>)}
+            <label style={{display:'block',fontSize:13,fontWeight:700,marginBottom:8}}>Occasion</label>
+            <select value={form.occasion} onChange={e=>setForm({...form,occasion:e.target.value})}
+              style={{...input}}>
+              {OCCASIONS.map(o=><option key={o}>{o}</option>)}
             </select>
           </div>
-          <div className="space-y-3">
-            <label className="block text-sm font-bold">Your details</label>
+
+          {/* Sender */}
+          <div style={{display:'flex',flexDirection:'column',gap:10}}>
+            <label style={{fontSize:13,fontWeight:700}}>Your details</label>
             <input required placeholder="Your name" value={form.senderName}
-              onChange={e => setForm({...form, senderName: e.target.value})}
-              className="w-full bg-[#141414] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D4A017]/50 focus:outline-none" />
+              onChange={e=>setForm({...form,senderName:e.target.value})} style={input}/>
             <input type="email" placeholder="Your email (for receipt)" value={form.senderEmail}
-              onChange={e => setForm({...form, senderEmail: e.target.value})}
-              className="w-full bg-[#141414] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D4A017]/50 focus:outline-none" />
+              onChange={e=>setForm({...form,senderEmail:e.target.value})} style={input}/>
           </div>
-          <div className="space-y-3">
-            <label className="block text-sm font-bold">Recipient</label>
+
+          {/* Recipient */}
+          <div style={{display:'flex',flexDirection:'column',gap:10}}>
+            <label style={{fontSize:13,fontWeight:700}}>Recipient</label>
             <input required placeholder="WhatsApp number (e.g. +447911123456)" value={form.recipientPhone}
-              onChange={e => setForm({...form, recipientPhone: e.target.value})}
-              className="w-full bg-[#141414] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D4A017]/50 focus:outline-none" />
+              onChange={e=>setForm({...form,recipientPhone:e.target.value})} style={input}/>
             <textarea placeholder="Personal message (optional)" value={form.message}
-              onChange={e => setForm({...form, message: e.target.value})}
-              rows={3}
-              className="w-full bg-[#141414] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D4A017]/50 focus:outline-none resize-none" />
+              onChange={e=>setForm({...form,message:e.target.value})} rows={3}
+              style={{...input,resize:'none'}}/>
           </div>
-          <div className="bg-[#141414] border border-white/10 rounded-xl p-4 space-y-2 text-sm">
-            <div className="flex justify-between"><span className="text-[rgba(245,240,232,0.5)]">Gift value</span><span className="font-bold">£{finalAmount}</span></div>
-            <div className="flex justify-between"><span className="text-[rgba(245,240,232,0.5)]">Service fee (3%)</span><span>£{fee}</span></div>
-            <div className="flex justify-between border-t border-white/10 pt-2"><span className="font-bold">Total</span><span className="font-black text-[#D4A017]">£{total}</span></div>
+
+          {/* Summary */}
+          <div style={{background:S.surface,border:`1px solid ${S.border}`,borderRadius:14,padding:'16px 20px',display:'flex',flexDirection:'column',gap:10}}>
+            <div style={{display:'flex',justifyContent:'space-between',fontSize:14}}>
+              <span style={{color:S.muted}}>Gift value</span>
+              <span style={{fontWeight:700}}>£{finalAmount}</span>
+            </div>
+            <div style={{display:'flex',justifyContent:'space-between',fontSize:14}}>
+              <span style={{color:S.muted}}>Service fee (3%)</span>
+              <span>£{fee}</span>
+            </div>
+            <div style={{display:'flex',justifyContent:'space-between',fontSize:15,borderTop:`1px solid ${S.border}`,paddingTop:10}}>
+              <span style={{fontWeight:800}}>Total</span>
+              <span style={{fontWeight:900,color:S.gold,fontSize:18}}>£{total}</span>
+            </div>
           </div>
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-          <button type="submit" disabled={loading || !finalAmount || finalAmount < 5}
-            className="btn-gold w-full py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+
+          {error && <p style={{color:'#e74c3c',fontSize:14}}>{error}</p>}
+
+          <button type="submit" disabled={loading||!finalAmount||finalAmount<5}
+            style={{background:`linear-gradient(135deg,${S.gold},${S.goldLight})`,color:'#000',fontWeight:900,borderRadius:14,
+              padding:'16px',fontSize:17,cursor:'pointer',border:'none',fontFamily:'inherit',
+              opacity: loading||!finalAmount||finalAmount<5 ? 0.5 : 1,boxShadow:`0 8px 24px rgba(212,160,23,0.3)`}}>
             {loading ? 'Creating...' : `Pay £${total} & Send Gift 🎊`}
           </button>
-          <p className="text-xs text-center text-[rgba(245,240,232,0.3)]">
+
+          <p style={{fontSize:12,textAlign:'center',color:'rgba(245,240,232,0.3)'}}>
             Secured by Stripe · Gift valid 12 months · Redeemable at all Odogwu partners
           </p>
         </form>

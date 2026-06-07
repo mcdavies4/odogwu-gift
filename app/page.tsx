@@ -5,117 +5,124 @@ export const metadata = {
   description: 'Spray digital gifts at weddings, birthdays and celebrations. Recipients redeem at African businesses across the UK.',
 }
 
+const S = {
+  dark: '#0A0A0A',
+  surface: '#141414',
+  surface2: '#1E1E1E',
+  gold: '#D4A017',
+  goldLight: '#F0C040',
+  text: '#F5F0E8',
+  muted: 'rgba(245,240,232,0.55)',
+  border: 'rgba(255,255,255,0.08)',
+  borderGold: 'rgba(212,160,23,0.25)',
+}
+
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#0A0A0A] text-[#F5F0E8]">
+    <main style={{minHeight:'100vh',background:S.dark,color:S.text,fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif'}}>
 
       {/* Header */}
-      <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#D4A017] to-[#F0C040] flex items-center justify-center font-black text-black text-lg">O</div>
-          <span className="font-black text-xl tracking-tight">Odogwu</span>
+      <header style={{borderBottom:`1px solid ${S.border}`,padding:'14px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',background:'rgba(10,10,10,0.95)',position:'sticky',top:0,zIndex:100,backdropFilter:'blur(12px)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:12}}>
+          <div style={{width:36,height:36,borderRadius:10,background:`linear-gradient(135deg,${S.gold},${S.goldLight})`,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:900,color:'#000',fontSize:18}}>O</div>
+          <span style={{fontWeight:900,fontSize:20,letterSpacing:'-0.02em'}}>Odogwu</span>
         </div>
-        <div className="flex items-center gap-4">
-          <Link href="/merchants" className="text-sm text-[rgba(245,240,232,0.5)] hover:text-[#D4A017] transition-colors">For Businesses</Link>
-          <Link href="/send" className="btn-gold px-5 py-2 text-sm">Send a Gift</Link>
+        <div style={{display:'flex',alignItems:'center',gap:16}}>
+          <Link href="/merchants" style={{fontSize:13,color:S.muted,textDecoration:'none'}}>For Businesses</Link>
+          <Link href="/send" style={{background:`linear-gradient(135deg,${S.gold},${S.goldLight})`,color:'#000',fontWeight:800,borderRadius:10,padding:'9px 20px',fontSize:13,textDecoration:'none'}}>Send a Gift</Link>
         </div>
       </header>
 
       {/* Hero */}
-      <section className="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
-        <div className="inline-flex items-center gap-2 bg-[#D4A017]/10 border border-[#D4A017]/25 rounded-full px-4 py-1.5 text-sm font-semibold text-[#D4A017] mb-8">
+      <section style={{maxWidth:860,margin:'0 auto',padding:'72px 24px 48px',textAlign:'center'}}>
+        <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(212,160,23,0.1)',border:`1px solid ${S.borderGold}`,borderRadius:40,padding:'7px 16px',fontSize:13,fontWeight:700,color:S.gold,marginBottom:28}}>
           🎊 Digital Money Spraying — Now in the UK
         </div>
-        <h1 className="text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-6">
-          Spray gifts.<br />
-          <span className="text-[#D4A017]">Not cash.</span>
+        <h1 style={{fontSize:64,fontWeight:900,lineHeight:1.05,letterSpacing:'-0.04em',marginBottom:20}}>
+          Spray gifts.<br/>
+          <span style={{color:S.gold}}>Not cash.</span>
         </h1>
-        <p className="text-xl text-[rgba(245,240,232,0.6)] max-w-2xl mx-auto mb-10 leading-relaxed">
+        <p style={{fontSize:18,color:S.muted,maxWidth:600,margin:'0 auto 32px',lineHeight:1.7}}>
           Send digital gift vouchers at weddings, birthdays and naming ceremonies.
           Recipients redeem at African restaurants, salons, and businesses across the UK.
         </p>
-        <div className="flex items-center justify-center gap-4 flex-wrap">
-          <Link href="/send" className="btn-gold px-8 py-4 text-lg">
+        <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:12,flexWrap:'wrap'}}>
+          <Link href="/send" style={{background:`linear-gradient(135deg,${S.gold},${S.goldLight})`,color:'#000',fontWeight:800,borderRadius:12,padding:'14px 32px',fontSize:16,textDecoration:'none',boxShadow:`0 8px 24px rgba(212,160,23,0.3)`}}>
             Send a Gift →
           </Link>
-          <Link href="/merchants" className="px-8 py-4 text-lg border border-white/15 rounded-xl hover:border-[#D4A017]/40 transition-colors">
+          <Link href="/merchants" style={{padding:'14px 32px',fontSize:16,border:`1px solid ${S.border}`,borderRadius:12,color:S.text,textDecoration:'none'}}>
             List Your Business
           </Link>
         </div>
       </section>
 
       {/* How it works */}
-      <section className="max-w-5xl mx-auto px-6 py-16">
-        <h2 className="text-3xl font-black text-center mb-12">How it works</h2>
-        <div className="grid md:grid-cols-3 gap-6">
+      <section style={{maxWidth:900,margin:'0 auto',padding:'40px 24px'}}>
+        <h2 style={{fontSize:32,fontWeight:900,textAlign:'center',marginBottom:40}}>How it works</h2>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:16}}>
           {[
-            { step: '01', icon: '💳', title: 'Buy a gift', desc: 'Choose an amount, add a personal message, enter the recipient\'s WhatsApp number.' },
-            { step: '02', icon: '📲', title: 'They receive it', desc: 'Recipient gets a WhatsApp message with a beautiful gift reveal link and QR code.' },
-            { step: '03', icon: '🛍', title: 'Redeem anywhere', desc: 'They spend it at any Odogwu partner business — restaurants, salons, events across the UK.' },
+            {step:'01',icon:'💳',title:'Buy a gift',desc:"Choose an amount, add a personal message, enter the recipient's WhatsApp number."},
+            {step:'02',icon:'📲',title:'They receive it',desc:'Recipient gets a WhatsApp message with a beautiful gift reveal link and QR code.'},
+            {step:'03',icon:'🛍',title:'Redeem anywhere',desc:'They spend it at any Odogwu partner business — restaurants, salons, events across the UK.'},
           ].map(item => (
-            <div key={item.step} className="bg-[#141414] border border-white/8 rounded-2xl p-6">
-              <div className="text-xs font-bold text-[#D4A017] mb-3 tracking-widest">{item.step}</div>
-              <div className="text-3xl mb-3">{item.icon}</div>
-              <div className="font-bold text-lg mb-2">{item.title}</div>
-              <div className="text-[rgba(245,240,232,0.5)] text-sm leading-relaxed">{item.desc}</div>
+            <div key={item.step} style={{background:S.surface,border:`1px solid ${S.border}`,borderRadius:20,padding:24}}>
+              <div style={{fontSize:11,fontWeight:700,color:S.gold,letterSpacing:'0.1em',marginBottom:12}}>{item.step}</div>
+              <div style={{fontSize:32,marginBottom:12}}>{item.icon}</div>
+              <div style={{fontWeight:700,fontSize:17,marginBottom:8}}>{item.title}</div>
+              <div style={{fontSize:14,color:S.muted,lineHeight:1.7}}>{item.desc}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Gift amounts */}
-      <section className="max-w-5xl mx-auto px-6 py-12">
-        <h2 className="text-3xl font-black text-center mb-4">Popular amounts</h2>
-        <p className="text-center text-[rgba(245,240,232,0.5)] mb-10">Choose any amount from £5 to £500</p>
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
-          {[10, 20, 50, 100, 200, 500].map(amount => (
-            <Link key={amount} href={`/send?amount=${amount}`}
-              className="bg-[#141414] border border-white/8 rounded-xl py-4 text-center font-bold hover:border-[#D4A017]/40 hover:bg-[#D4A017]/5 transition-all">
-              £{amount}
+      {/* Amounts */}
+      <section style={{maxWidth:900,margin:'0 auto',padding:'40px 24px'}}>
+        <h2 style={{fontSize:32,fontWeight:900,textAlign:'center',marginBottom:8}}>Popular amounts</h2>
+        <p style={{textAlign:'center',color:S.muted,marginBottom:32}}>Choose any amount from £5 to £500</p>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:10}}>
+          {[10,20,50,100,200,500].map(a => (
+            <Link key={a} href={`/send?amount=${a}`} style={{background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,padding:'16px 8px',textAlign:'center',fontWeight:800,fontSize:16,color:S.text,textDecoration:'none',display:'block'}}>
+              £{a}
             </Link>
           ))}
         </div>
       </section>
 
       {/* Occasions */}
-      <section className="max-w-5xl mx-auto px-6 py-12">
-        <h2 className="text-3xl font-black text-center mb-10">Perfect for every occasion</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <section style={{maxWidth:900,margin:'0 auto',padding:'40px 24px'}}>
+        <h2 style={{fontSize:32,fontWeight:900,textAlign:'center',marginBottom:36}}>Perfect for every occasion</h2>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:12}}>
           {[
-            { emoji: '💒', name: 'Weddings' },
-            { emoji: '🎂', name: 'Birthdays' },
-            { emoji: '👶', name: 'Naming ceremonies' },
-            { emoji: '🎓', name: 'Graduations' },
-            { emoji: '🙏', name: 'Thanksgiving' },
-            { emoji: '🎉', name: 'Parties' },
-            { emoji: '❤️', name: 'Engagements' },
-            { emoji: '🏠', name: 'Housewarming' },
-          ].map(occ => (
-            <div key={occ.name} className="bg-[#141414] border border-white/8 rounded-xl p-4 text-center">
-              <div className="text-2xl mb-2">{occ.emoji}</div>
-              <div className="text-sm font-semibold">{occ.name}</div>
+            {emoji:'💒',name:'Weddings'},{emoji:'🎂',name:'Birthdays'},
+            {emoji:'👶',name:'Naming ceremonies'},{emoji:'🎓',name:'Graduations'},
+            {emoji:'🙏',name:'Thanksgiving'},{emoji:'🎉',name:'Parties'},
+            {emoji:'❤️',name:'Engagements'},{emoji:'🏠',name:'Housewarming'},
+          ].map(o => (
+            <div key={o.name} style={{background:S.surface,border:`1px solid ${S.border}`,borderRadius:16,padding:'20px 12px',textAlign:'center'}}>
+              <div style={{fontSize:28,marginBottom:8}}>{o.emoji}</div>
+              <div style={{fontSize:13,fontWeight:600}}>{o.name}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* CTA */}
-      <section className="max-w-3xl mx-auto px-6 py-16 text-center">
-        <div className="bg-gradient-to-br from-[#D4A017]/10 to-[#1B4D2E]/10 border border-[#D4A017]/20 rounded-2xl p-12">
-          <h2 className="text-4xl font-black mb-4">Ready to spray?</h2>
-          <p className="text-[rgba(245,240,232,0.55)] mb-8">Join hundreds of Nigerians celebrating the right way.</p>
-          <Link href="/send" className="btn-gold px-10 py-4 text-lg inline-block">
+      <section style={{maxWidth:700,margin:'0 auto',padding:'40px 24px 60px'}}>
+        <div style={{background:`linear-gradient(135deg,rgba(212,160,23,0.08),rgba(27,77,46,0.08))`,border:`1px solid ${S.borderGold}`,borderRadius:24,padding:'56px 40px',textAlign:'center'}}>
+          <h2 style={{fontSize:40,fontWeight:900,marginBottom:12}}>Ready to spray?</h2>
+          <p style={{color:S.muted,marginBottom:28,fontSize:16}}>Join hundreds of Nigerians celebrating the right way.</p>
+          <Link href="/send" style={{background:`linear-gradient(135deg,${S.gold},${S.goldLight})`,color:'#000',fontWeight:800,borderRadius:12,padding:'16px 40px',fontSize:17,textDecoration:'none',display:'inline-block',boxShadow:`0 8px 24px rgba(212,160,23,0.35)`}}>
             Send Your First Gift →
           </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/8 px-6 py-8 text-center text-sm text-[rgba(245,240,232,0.3)]">
-        <div className="mb-2">
-          <Link href="/merchants" className="hover:text-[#D4A017] mx-3 transition-colors">For Businesses</Link>
-          <Link href="/terms" className="hover:text-[#D4A017] mx-3 transition-colors">Terms</Link>
-          <Link href="/privacy" className="hover:text-[#D4A017] mx-3 transition-colors">Privacy</Link>
+      <footer style={{borderTop:`1px solid ${S.border}`,padding:'20px 24px',textAlign:'center',fontSize:13,color:'rgba(245,240,232,0.3)'}}>
+        <div style={{marginBottom:8}}>
+          <Link href="/merchants" style={{color:'rgba(245,240,232,0.3)',margin:'0 12px',textDecoration:'none'}}>For Businesses</Link>
+          <Link href="/terms" style={{color:'rgba(245,240,232,0.3)',margin:'0 12px',textDecoration:'none'}}>Terms</Link>
+          <Link href="/privacy" style={{color:'rgba(245,240,232,0.3)',margin:'0 12px',textDecoration:'none'}}>Privacy</Link>
         </div>
         <div>© 2026 Odogwu · The 36th Company Ltd · London</div>
       </footer>
