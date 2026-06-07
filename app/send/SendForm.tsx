@@ -8,10 +8,8 @@ const S = {
   muted:'rgba(245,240,232,0.55)', border:'rgba(255,255,255,0.08)',
   gold:'#D4A017', goldLight:'#F0C040',
 }
-
 const AMOUNTS = [10,20,50,100,200,500]
 const OCCASIONS = ['Wedding','Birthday','Naming Ceremony','Graduation','Thanksgiving','Party','Engagement','Housewarming','Other']
-
 const input = {width:'100%',background:S.surface,border:`1px solid ${S.border}`,borderRadius:12,padding:'12px 16px',color:S.text,fontSize:14,fontFamily:'inherit',outline:'none',boxSizing:'border-box' as const}
 
 export default function SendForm() {
@@ -45,10 +43,9 @@ export default function SendForm() {
   return (
     <main style={{minHeight:'100vh',background:S.dark,color:S.text,fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif'}}>
       <div style={{maxWidth:520,margin:'0 auto',padding:'40px 24px 60px'}}>
-
         <Link href="/" style={{color:S.gold,fontSize:13,textDecoration:'none',display:'block',marginBottom:24}}>← Back</Link>
         <h1 style={{fontSize:32,fontWeight:900,marginBottom:6}}>Send a gift 🎊</h1>
-        <p style={{color:S.muted,marginBottom:32,fontSize:15}}>They will receive it on WhatsApp instantly.</p>
+        <p style={{color:S.muted,marginBottom:32,fontSize:15}}>You will receive the gift link by email to forward to the recipient.</p>
 
         <form onSubmit={handleSubmit} style={{display:'flex',flexDirection:'column',gap:24}}>
 
@@ -60,7 +57,7 @@ export default function SendForm() {
                 <button key={a} type="button" onClick={()=>{setAmount(a);setCustom('')}}
                   style={{padding:'12px 8px',borderRadius:12,fontWeight:800,fontSize:15,cursor:'pointer',fontFamily:'inherit',
                     border: !custom&&amount===a ? `2px solid ${S.gold}` : `1px solid ${S.border}`,
-                    background: !custom&&amount===a ? `rgba(212,160,23,0.15)` : S.surface,
+                    background: !custom&&amount===a ? 'rgba(212,160,23,0.15)' : S.surface,
                     color: !custom&&amount===a ? S.gold : S.text}}>
                   £{a}
                 </button>
@@ -73,25 +70,27 @@ export default function SendForm() {
           {/* Occasion */}
           <div>
             <label style={{display:'block',fontSize:13,fontWeight:700,marginBottom:8}}>Occasion</label>
-            <select value={form.occasion} onChange={e=>setForm({...form,occasion:e.target.value})}
-              style={{...input}}>
+            <select value={form.occasion} onChange={e=>setForm({...form,occasion:e.target.value})} style={input}>
               {OCCASIONS.map(o=><option key={o}>{o}</option>)}
             </select>
           </div>
 
-          {/* Sender */}
+          {/* Your details */}
           <div style={{display:'flex',flexDirection:'column',gap:10}}>
             <label style={{fontSize:13,fontWeight:700}}>Your details</label>
             <input required placeholder="Your name" value={form.senderName}
               onChange={e=>setForm({...form,senderName:e.target.value})} style={input}/>
-            <input type="email" placeholder="Your email (for receipt)" value={form.senderEmail}
-              onChange={e=>setForm({...form,senderEmail:e.target.value})} style={input}/>
+            <input required type="email" placeholder="Your email — we send the gift link here"
+              value={form.senderEmail} onChange={e=>setForm({...form,senderEmail:e.target.value})} style={input}/>
+            <div style={{fontSize:12,color:S.muted,padding:'4px 4px'}}>
+              📧 After payment, you will receive the gift card and QR code by email to forward however you like.
+            </div>
           </div>
 
-          {/* Recipient */}
+          {/* Recipient info */}
           <div style={{display:'flex',flexDirection:'column',gap:10}}>
-            <label style={{fontSize:13,fontWeight:700}}>Recipient</label>
-            <input required placeholder="WhatsApp number (e.g. +447911123456)" value={form.recipientPhone}
+            <label style={{fontSize:13,fontWeight:700}}>Recipient (optional)</label>
+            <input placeholder="Recipient name (shown on gift card)" value={form.recipientPhone}
               onChange={e=>setForm({...form,recipientPhone:e.target.value})} style={input}/>
             <textarea placeholder="Personal message (optional)" value={form.message}
               onChange={e=>setForm({...form,message:e.target.value})} rows={3}
@@ -108,8 +107,8 @@ export default function SendForm() {
               <span style={{color:S.muted}}>Service fee (3%)</span>
               <span>£{fee}</span>
             </div>
-            <div style={{display:'flex',justifyContent:'space-between',fontSize:15,borderTop:`1px solid ${S.border}`,paddingTop:10}}>
-              <span style={{fontWeight:800}}>Total</span>
+            <div style={{display:'flex',justifyContent:'space-between',borderTop:`1px solid ${S.border}`,paddingTop:10}}>
+              <span style={{fontWeight:800,fontSize:15}}>Total</span>
               <span style={{fontWeight:900,color:S.gold,fontSize:18}}>£{total}</span>
             </div>
           </div>
@@ -117,9 +116,9 @@ export default function SendForm() {
           {error && <p style={{color:'#e74c3c',fontSize:14}}>{error}</p>}
 
           <button type="submit" disabled={loading||!finalAmount||finalAmount<5}
-            style={{background:`linear-gradient(135deg,${S.gold},${S.goldLight})`,color:'#000',fontWeight:900,borderRadius:14,
-              padding:'16px',fontSize:17,cursor:'pointer',border:'none',fontFamily:'inherit',
-              opacity: loading||!finalAmount||finalAmount<5 ? 0.5 : 1,boxShadow:`0 8px 24px rgba(212,160,23,0.3)`}}>
+            style={{background:`linear-gradient(135deg,${S.gold},${S.goldLight})`,color:'#000',fontWeight:900,
+              borderRadius:14,padding:'16px',fontSize:17,cursor:'pointer',border:'none',fontFamily:'inherit',
+              opacity:loading||!finalAmount||finalAmount<5?0.5:1,boxShadow:'0 8px 24px rgba(212,160,23,0.3)'}}>
             {loading ? 'Creating...' : `Pay £${total} & Send Gift 🎊`}
           </button>
 

@@ -1,32 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { sendGiftWhatsApp } from '@/lib/whatsapp'
+import { sendGiftEmail } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'edge'
 
-// Stripe webhook verification using Web Crypto API (edge-compatible)
 async function verifyStripeSignature(payload: string, sigHeader: string, secret: string): Promise<boolean> {
   try {
     const parts = sigHeader.split(',')
     const timestamp = parts.find(p => p.startsWith('t='))?.split('=')[1]
     const signature = parts.find(p => p.startsWith('v1='))?.split('=')[1]
     if (!timestamp || !signature) return false
-
     const signedPayload = `${timestamp}.${payload}`
     const encoder = new TextEncoder()
     const key = await crypto.subtle.importKey(
       'raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
     )
     const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(signedPayload))
-    const expected = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('')
+    const expected = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2,'0')).join('')
     return expected === signature
   } catch { return false }
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.text()
-  const sig  = req.headers.get('stripe-signature') || ''
+  const body   = await req.text()
+  const sig    = req.headers.get('stripe-signature') || ''
   const secret = process.env.STRIPE_WEBHOOK_SECRET || ''
 
   const valid = await verifyStripeSignature(body, sig, secret)
@@ -50,21 +48,22 @@ export async function POST(req: NextRequest) {
     const { data: gift } = await supabaseAdmin
       .from('gifts').select('*').eq('id', giftId).single()
 
-    if (gift) {
+    if (gift && gift.sender_email) {
       try {
-        await sendGiftWhatsApp({
+        await sendGiftEmail({
+          senderName:     gift.sender_name,
+          senderEmail:    gift.sender_email,
           recipientPhone: gift.recipient_phone,
-          senderName: gift.sender_name,
-          amount: gift.amount,
-          message: gift.message,
-          giftCode: gift.code,
-          occasion: gift.occasion,
+          amount:         gift.amount,
+          message:        gift.message,
+          giftCode:       gift.code,
+          occasion:       gift.occasion,
         })
         await supabaseAdmin.from('gifts').update({
           whatsapp_sent_at: new Date().toISOString()
         }).eq('id', giftId)
       } catch (e) {
-        console.error('WhatsApp failed:', e)
+        console.error('Email send failed:', e)
       }
     }
   }
